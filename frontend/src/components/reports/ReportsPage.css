@@ -1,0 +1,39 @@
+.reports-container {
+    width: 100%;
+    padding: 16px;
+  }
+  
+  .tabs-list {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .tab-trigger {
+    padding: 10px 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 16px;
+    color: #555;
+    transition: all 0.2s;
+  }
+  
+  .tab-trigger:hover {
+    color: #007bff;
+  }
+  
+  .tab-trigger[data-state="active"] {
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .tab-content {
+    padding: 20px;
+    display: none;
+  }
+  
+  .tab-content[data-state="active"] {
+    display: block;
+  }
