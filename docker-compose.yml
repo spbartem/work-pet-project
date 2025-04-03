@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"           # Фронтенд доступен на порту 3000
     environment:
-      - REACT_APP_API_URL=http://localhost:8080 # Ссылка на бэкенд
+      - REACT_APP_API_URL=${LINK_TO_BACKEND} # Ссылка на бэкенд
     depends_on:
       - backend
 
