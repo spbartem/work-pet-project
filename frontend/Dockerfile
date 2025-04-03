@@ -13,6 +13,8 @@ RUN npm install
 # Копируем весь исходный код проекта
 COPY . .
 
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+
 # Строим приложение для продакшн
 RUN npm run build
 
