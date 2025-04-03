@@ -13,9 +13,6 @@ RUN npm install
 # Копируем весь исходный код проекта
 COPY . .
 
-# Передаем переменную во время сборки
-ENV REACT_APP_API_URL=${REACT_APP_API_URL}
-
 # Строим приложение для продакшн
 RUN npm run build
 
@@ -35,7 +32,10 @@ RUN echo 'server { \
     root /usr/share/nginx/html; \
     index index.html; \
     location / { \
-        try_files $uri /index.html; \
+        try_files $uri /index.html; \ 
+    } \   
+    location /api/ { \
+        proxy_pass http://backend:8080/; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
