@@ -35,7 +35,7 @@ RUN echo 'server { \
         try_files $uri /index.html; \ 
     } \   
     location /api/ { \
-        proxy_pass http://backend:8080/; \
+        proxy_pass http://10.40.10.28:8080/; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
