@@ -66,8 +66,8 @@ public class ReportOrnQuarterlyCollectabilityService {
     }
     public byte[] generateXlsxReport(List<Object[]> dataCollectability, List<Object[]> dataDebt, LocalDate date) throws IOException {
 
-        DateTimeFormatter formatterMonthYear = DateTimeFormatter.ofPattern("LLLL yyyy", Locale.of("ru"));
-        DateTimeFormatter formatterDayMonthYear = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.of("ru"));
+        DateTimeFormatter formatterMonthYear = DateTimeFormatter.ofPattern("LLLL yyyy", new Locale("ru"));
+        DateTimeFormatter formatterDayMonthYear = DateTimeFormatter.ofPattern("dd.MM.yyyy", new Locale("ru"));
 
         String reportYear = String.valueOf(date.getYear());
         String prevYear = String.valueOf(date.getYear() - 1);
