@@ -3,6 +3,7 @@ import axios from "axios";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 const backendUrl = process.env.REACT_APP_API_URL;
+console.log(backendUrl);
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
