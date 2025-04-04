@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOriginPatterns("http://10.40.10.28:3000")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);
