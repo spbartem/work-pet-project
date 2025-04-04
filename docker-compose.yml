@@ -3,6 +3,8 @@ services:
     build:
       context: ./frontend   # Путь к папке с React-приложением
       dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=${LINK_TO_BACKEND} 
     ports:
       - "3000:3000"           # Фронтенд доступен на порту 3000
     environment:

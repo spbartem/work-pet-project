@@ -13,7 +13,9 @@ RUN npm install
 # Копируем весь исходный код проекта
 COPY . .
 
-ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+# Устанавливаем переменную окружения через ARG и передаем её в ENV
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Строим приложение для продакшн
 RUN npm run build
@@ -34,10 +36,7 @@ RUN echo 'server { \
     root /usr/share/nginx/html; \
     index index.html; \
     location / { \
-        try_files $uri /index.html; \ 
-    } \   
-    location /api/ { \
-        proxy_pass http://10.40.10.28:8080/; \
+        try_files $uri /index.html; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
