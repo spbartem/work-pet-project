@@ -1,0 +1,27 @@
+services:
+  frontend:
+    build:
+      context: ./frontend   # Путь к папке с React-приложением
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=${LINK_TO_BACKEND} 
+    ports:
+      - "3000:3000"           # Фронтенд доступен на порту 3000
+    environment:
+      - REACT_APP_API_URL=${LINK_TO_BACKEND} # Ссылка на бэкенд
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend    # Путь к папке с Java-приложением
+    ports:
+      - "8080:8080"         # Бэкенд доступен на порту 5000
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DB_DEV_URL=${DB_DEV_URL}
+      - DB_DEV_USER=${DB_DEV_USER}
+      - DB_DEV_PASSWORD=${DB_DEV_PASSWORD}
+      - DB_PROD_URL=${DB_PROD_URL}
+      - DB_PROD_USER=${DB_PROD_USER}
+      - DB_PROD_PASSWORD=${DB_PROD_PASSWORD}
