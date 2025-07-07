@@ -58,6 +58,27 @@ const CustomTooltip = ({ active, payload }) => {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF9999"];
 
+export function useOutsideClick(refs, handler, active = true) {
+  useEffect(() => {
+    if (!active) return;
+
+    function handleClick(event) {
+      const isOutside = refs.every(
+        (ref) => ref.current && !ref.current.contains(event.target)
+      );
+
+      if (isOutside) {
+        handler();
+      }
+    }
+
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [refs, handler, active]);
+}
+
 export default function Dashboard() {
   const [dataDebtOperational, setDataDebtOperational] = useState(null);
   const [availableDatesVr, setAvailableDatesVr] = useState([]);
@@ -69,7 +90,13 @@ export default function Dashboard() {
 
   const [isOpenOp, setIsOpenOp] = useState(false);
   const [isOpenVr, setIsOpenVr] = useState(false);
-  const containerRef = useRef(null);
+
+  const containerRefVr = useRef(null);
+  const calendarRefVr = useRef(null);
+  const containerRefOp = useRef(null);
+  const calendarRefOp = useRef(null);
+
+  const [calendarViewDate, setCalendarViewDate] = useState(selectedDateVr || new Date());
 
   // Конвертируем строки с сервера в Date для фильтра
   const dateObjectsVr = availableDatesVr.map((d) => new Date(d));
@@ -132,6 +159,15 @@ export default function Dashboard() {
     }
   }, [selectedDateOperational]);
 
+  //закрыть календарь при клике в любом месте окна
+  useOutsideClick([containerRefVr, calendarRefVr], () => {
+    setIsOpenVr(false);
+  }, isOpenVr);
+
+    useOutsideClick([containerRefOp, calendarRefOp], () => {
+    setIsOpenOp(false);
+  }, isOpenOp);
+
   const formattedDateVr = selectedDateVr instanceof Date
   ? `${selectedDateVr.getFullYear()}-${String(selectedDateVr.getMonth() + 1).padStart(2,'0')}-${String(selectedDateVr.getDate()).padStart(2,'0')}`
   : selectedDateVr;
@@ -176,34 +212,47 @@ return (
           <h3 style={{ fontSize: 17, textAlign: "center", margin: "0 0 0 0" }}>
             <b>Задолженность по Минстрою</b>
           </h3>
-          <div style={containerStyle} ref={containerRef}>
+          <div style={containerStyle} ref={containerRefVr}>
             <label className="my-label">Отчётная дата:</label>
             <input
               type="text"
               readOnly
               value={formatDate(selectedDateVr)}
               placeholder="дд.мм.гггг"
-              onClick={() => setIsOpenVr(!isOpenVr)}
+              onClick={() => setIsOpenVr((prev) => !prev)}
               style={ commonInputStyle }
             />
             {isOpenVr && (
               <div style={calendarPopupStyle}>
-                <Calendar
-                  onChange={(date) => {
-                    setSelectedDateVr(date);
-                    setIsOpenVr(false);
-                  }}
-                  tileDisabled={({ date }) => {
-                      const normalized = new Date(date);
-                      normalized.setHours(0, 0, 0, 0); 
-                      return !allowedTimeStampsVr.has(normalized.getTime());
-                  }}
-                />
+                <div style={calendarPopupStyle} ref={calendarRefVr}>
+                  <Calendar
+                    onChange={(date) => {
+                      setSelectedDateVr(date);
+                      setCalendarViewDate(date);
+                      setIsOpenVr(false);
+                    }}
+                    tileDisabled={({ date }) => {
+                        const normalized = new Date(date);
+                        normalized.setHours(0, 0, 0, 0); 
+                        return !allowedTimeStampsVr.has(normalized.getTime());
+                    }}
+                    activeStartDate={calendarViewDate}
+                    onActiveStartDateChange={({ activeStartDate }) =>
+                    setCalendarViewDate(activeStartDate)
+                    }
+                    minDate={
+                      new Date(Math.min(...Array.from(allowedTimeStampsVr)))
+                    }
+                    maxDate={
+                      new Date(Math.max(...Array.from(allowedTimeStampsVr)))
+                    }
+                  />
+                </div>
               </div>
             )}
           </div>
 
-          <div style={containerStyle} ref={containerRef}>
+          <div style={containerStyle} ref={containerRefVr}>
             <label className="my-label">СФФКР:</label>
             <select 
               value={selectedDecision} 
@@ -379,29 +428,41 @@ return (
           <h3 style={{ fontSize: 17, textAlign: "center", margin: "0 0 0 0" }}>
             <b>Оперативная задолженность</b>
           </h3>
-          <div style={containerStyle} ref={containerRef}>
+          <div style={containerStyle} ref={containerRefOp}>
             <label className="my-label">Отчётная дата:</label>
             <input
               type="text"
               readOnly
               value={formatDate(selectedDateOperational)}
               placeholder="дд.мм.гггг"
-              onClick={() => setIsOpenOp(!isOpenOp)}
+              onClick={() => setIsOpenOp((prev) => !prev)}
               style={ commonInputStyle }
             />
             {isOpenOp && (
               <div style={calendarPopupStyle}>
-                <Calendar
-                  onChange={(date) => {
-                    setSelectedDateOperational(date);
-                    setIsOpenOp(false);
-                  }}
-                  tileDisabled={({ date }) => {
-                      const normalized = new Date(date);
-                      normalized.setHours(0, 0, 0, 0); 
-                      return !allowedTimeStampsOp.has(normalized.getTime());
-                  }}
-                />
+                <div style={calendarPopupStyle} ref={calendarRefOp}>
+                  <Calendar
+                    onChange={(date) => {
+                      setSelectedDateOperational(date);
+                      setIsOpenOp(false);
+                    }}
+                    tileDisabled={({ date }) => {
+                        const normalized = new Date(date);
+                        normalized.setHours(0, 0, 0, 0); 
+                        return !allowedTimeStampsOp.has(normalized.getTime());
+                    }}
+                    activeStartDate={calendarViewDate}
+                    onActiveStartDateChange={({ activeStartDate }) =>
+                    setCalendarViewDate(activeStartDate)
+                    }
+                    minDate={
+                      new Date(Math.min(...Array.from(allowedTimeStampsVr)))
+                    }
+                    maxDate={
+                      new Date(Math.max(...Array.from(allowedTimeStampsVr)))
+                    }                    
+                  />
+                </div>
               </div>
             )}
           </div>
