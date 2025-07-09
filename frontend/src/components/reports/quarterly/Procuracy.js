@@ -16,6 +16,7 @@ const Procuracy = ({ apiEndpoint }) => {
     const [loadingFill, setLoadingFill] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
     const intervalCheckFillStatus = useRef(null);
+    const failedAttempts = useRef(0);
 
     const fetchDates = async () => {
             try {
@@ -105,53 +106,18 @@ const Procuracy = ({ apiEndpoint }) => {
         checkFillAvailability();
     }, [loadingFill]);
 
-    useEffect(() => {
-        // Проверяем, выполняется ли заполнение после обновления страницы
-        const isFilling = localStorage.getItem("isFilling");
-
-        if (isFilling === "true") {
-            startCheckingStatus(); // Запускаем проверку статуса после обновления
-        }
-
-        return () => {
-            if (intervalCheckFillStatus) {
-                clearInterval(intervalCheckFillStatus); // Очищаем интервал при размонтировании
-            }
-        };
-    }, []);
-
-    // Функция запуска проверки статуса
-    const startCheckingStatus = () => {
-        if (intervalCheckFillStatus.current) {
-            clearInterval(intervalCheckFillStatus.current);
-        }
-        intervalCheckFillStatus.current = setInterval(checkFillStatus, 60000);
-    };
-
     const handleFill = async () => {
         setStatusMessage("Заполнение отчёта данными, пожалуйста, подождите...");
         setLoadingFill(true);
         localStorage.setItem("isFilling", "true");
-    
-        try {
 
-            startCheckingStatus();
+        try {
+            startCheckingStatus(); // запуск сразу, до запроса
+
             const response = await axios.post(`${apiEndpoint}/fill`);
             console.log("Fill response:", response.data);
-            fetchDates();
-            clearInterval(intervalCheckFillStatus);
 
-            const durationResponse = await axios.get(`${apiEndpoint}/fill-duration`);
-            console.log("Duration response:", durationResponse.data);
-
-            if (durationResponse.data) {
-                const durationMs = durationResponse.data;
-                const hours = Math.floor(durationMs / 3600000);
-                const minutes = Math.floor((durationMs % 3600000) / 60000);
-                const seconds = Math.floor((durationMs % 60000) / 1000);
-                
-                setStatusMessage(`${response.data.err_mess}; длительность: ${hours} ч. ${minutes} м. ${seconds} с.`);
-            }
+            // Остальная логика...
 
         } catch (error) {
             console.error("Ошибка при заполнении:", error);
@@ -162,27 +128,77 @@ const Procuracy = ({ apiEndpoint }) => {
             setStatusMessage("Ошибка при заполнении данных.");
         } finally {
             setLoadingFill(false);
-            localStorage.removeItem("isFilling");            
+            localStorage.removeItem("isFilling");
         }
     };
 
     const checkFillStatus = async () => {
         try {
-            const response = await axios.get(`${apiEndpoint}/check-progress-status`);
-            console.log(response.data);
+            const response = await axios.get(`${apiEndpoint}/check-progress-status`, {
+                timeout: 10000, // 10 сек
+            });
+
+            failedAttempts.current = 0; // сбрасываем при успехе
 
             if (response.data.processed) {
-                setLoadingFill(true);
-                setStatusMessage(`Заполнение отчёта данными, пожалуйста, подождите... Продолжительность: ${response.data.duration.hours} ч. ${response.data.duration.minutes} м. ${response.data.duration.seconds} с.` );
+                const { hours, minutes, seconds } = response.data.duration;
+                setStatusMessage(`Заполнение отчёта данными, пожалуйста, подождите... Продолжительность: ${hours} ч. ${minutes} м. ${seconds} с.`);
+
+                if (response.data.finished) {
+                    clearInterval(intervalCheckFillStatus.current);
+                    intervalCheckFillStatus.current = null;
+                    setLoadingFill(false);
+                    localStorage.removeItem("isFilling");
+                    fetchDates(); // Обновляем список дат
+                    setStatusMessage("Заполнение завершено.");
+                }
+
+            } else {
+                console.log("Процесс ещё не начался или не активен.");
             }
+
         } catch (error) {
-            console.error("Ошибка при получении статуса заполнения:", error);
-            
+            if (error.code === 'ECONNABORTED') {
+                failedAttempts.current += 1;
+                setStatusMessage(`Сервер не отвечает. Повторная попытка... (${failedAttempts.current}/5)`);
+
+                if (failedAttempts.current >= 5) {
+                    clearInterval(intervalCheckFillStatus.current);
+                    intervalCheckFillStatus.current = null;
+                    setLoadingFill(false);
+                    localStorage.removeItem("isFilling");
+                    setStatusMessage("Ошибка: сервер не отвечает. Проверка остановлена.");
+                }
+
+            } else {
+                console.error("Ошибка при получении статуса:", error);
+                setStatusMessage("Ошибка при проверке статуса заполнения.");
+            }
         }
     };
 
+    const startCheckingStatus = () => {
+        if (intervalCheckFillStatus.current) {
+            clearInterval(intervalCheckFillStatus.current);
+        }
+
+        checkFillStatus(); // сразу запускаем
+        intervalCheckFillStatus.current = setInterval(checkFillStatus, 10000); // потом каждые 10 сек
+    };
+
+    // useEffect: при загрузке страницы — продолжить опрос
     useEffect(() => {
-        checkFillStatus();
+        const isFilling = localStorage.getItem("isFilling");
+        if (isFilling === "true") {
+            startCheckingStatus();
+        }
+
+        return () => {
+            if (intervalCheckFillStatus.current) {
+                clearInterval(intervalCheckFillStatus.current);
+                intervalCheckFillStatus.current = null;
+            }
+        };
     }, []);
 
     const getFirstDayOfNextQuarter = () => {
