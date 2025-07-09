@@ -112,23 +112,19 @@ const Procuracy = ({ apiEndpoint }) => {
         localStorage.setItem("isFilling", "true");
 
         try {
-            startCheckingStatus(); // запуск сразу, до запроса
-
             const response = await axios.post(`${apiEndpoint}/fill`);
             console.log("Fill response:", response.data);
 
-            // Остальная логика...
+            startCheckingStatus(); // теперь тут, после успешного запуска
+            fetchDates(); // обновляем список дат
 
         } catch (error) {
             console.error("Ошибка при заполнении:", error);
-            if (intervalCheckFillStatus.current) {
-                clearInterval(intervalCheckFillStatus.current);
-                intervalCheckFillStatus.current = null;
-            }
+
             setStatusMessage("Ошибка при заполнении данных.");
+            localStorage.removeItem("isFilling");
         } finally {
             setLoadingFill(false);
-            localStorage.removeItem("isFilling");
         }
     };
 
