@@ -5,12 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.fkr.workpetproject.dao.entity.ReportOrnQuarterlyProcuracy;
+import ru.fkr.workpetproject.repository.custom.ReportOrnQuarterlyProcuracyRepositoryCustom;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public interface ReportOrnQuarterlyProcuracyRepository extends JpaRepository<ReportOrnQuarterlyProcuracy, Long> {
+public interface ReportOrnQuarterlyProcuracyRepository extends JpaRepository<ReportOrnQuarterlyProcuracy, Long>,
+        ReportOrnQuarterlyProcuracyRepositoryCustom {
 
     @Query(value = "SELECT d.name AS districtName, h.fullAddress AS house_full_address, " +
             "SUM(COALESCE(r.feesPeriod, 0)) + SUM(COALESCE(r.penaltiesPeriod, 0)) AS fees_period, " +
@@ -40,7 +42,7 @@ public interface ReportOrnQuarterlyProcuracyRepository extends JpaRepository<Rep
             "FROM pg_stat_activity " +
             "WHERE state = 'active' AND lower(query) LIKE 'select * from f_art_report_orn_quarterly_procuracy_fill()%'",
             nativeQuery = true)
-    Map<String, Object> checkProgressStatusReportOrnQuarterlyProcuracy();
+    Map<String, Object> checkProgressStatusReportOrnQuarterlyProcuracyOld();
 
     @Transactional
     @Query(value = "SELECT * FROM f_art_report_orn_quarterly_procuracy_fill();", nativeQuery = true)

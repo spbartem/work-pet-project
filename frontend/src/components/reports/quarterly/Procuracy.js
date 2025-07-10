@@ -112,18 +112,27 @@ const Procuracy = ({ apiEndpoint }) => {
         localStorage.setItem("isFilling", "true");
 
         try {
-            const response = await axios.post(`${apiEndpoint}/fill`);
+                const response = await axios.post(`${apiEndpoint}/fill`, null, {
+                timeout: 30000
+            });
             console.log("Fill response:", response.data);
 
             startCheckingStatus(); // теперь тут, после успешного запуска
             fetchDates(); // обновляем список дат
 
-        } catch (error) {
-            console.error("Ошибка при заполнении:", error);
+            } catch (error) {
+                console.error("Ошибка при заполнении:", error);
 
-            setStatusMessage("Ошибка при заполнении данных.");
-            localStorage.removeItem("isFilling");
-        } finally {
+                // ЕСЛИ это просто таймаут — всё ещё запускаем проверку статуса!
+                if (error.code === "ECONNABORTED") {
+                    setStatusMessage("Ответ от сервера не получен сразу, пробуем отслеживать процесс...");
+                    startCheckingStatus(); // запуск мониторинга
+                } else {
+                    setStatusMessage("Ошибка при заполнении данных.");
+                    localStorage.removeItem("isFilling");
+                    setLoadingFill(false);
+                }
+            } finally {
             setLoadingFill(false);
         }
     };
@@ -134,6 +143,7 @@ const Procuracy = ({ apiEndpoint }) => {
                 timeout: 10000, // 10 сек
             });
 
+            console.log("Статус прогресса:", response.data);
             failedAttempts.current = 0; // сбрасываем при успехе
 
             if (response.data.processed) {
@@ -169,6 +179,12 @@ const Procuracy = ({ apiEndpoint }) => {
             } else {
                 console.error("Ошибка при получении статуса:", error);
                 setStatusMessage("Ошибка при проверке статуса заполнения.");
+
+                // ⛔ Останавливаем цикл опроса
+                clearInterval(intervalCheckFillStatus.current);
+                intervalCheckFillStatus.current = null;
+                setLoadingFill(false);
+                localStorage.removeItem("isFilling");
             }
         }
     };
@@ -178,8 +194,11 @@ const Procuracy = ({ apiEndpoint }) => {
             clearInterval(intervalCheckFillStatus.current);
         }
 
-        checkFillStatus(); // сразу запускаем
-        intervalCheckFillStatus.current = setInterval(checkFillStatus, 10000); // потом каждые 10 сек
+        // Ждём 2 секунды перед первым запросом, чтобы сервер успел начать обработку
+        setTimeout(() => {
+            checkFillStatus(); // первый запрос
+            intervalCheckFillStatus.current = setInterval(checkFillStatus, 10000);
+        }, 2000);
     };
 
     // useEffect: при загрузке страницы — продолжить опрос
