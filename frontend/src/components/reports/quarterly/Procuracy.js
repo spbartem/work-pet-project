@@ -132,9 +132,7 @@ const Procuracy = ({ apiEndpoint }) => {
                     localStorage.removeItem("isFilling");
                     setLoadingFill(false);
                 }
-            } finally {
-            setLoadingFill(false);
-        }
+            }
     };
 
     const checkFillStatus = async () => {
@@ -156,14 +154,22 @@ const Procuracy = ({ apiEndpoint }) => {
                     setLoadingFill(false);
                     localStorage.removeItem("isFilling");
                     fetchDates(); // Обновляем список дат
-                    setStatusMessage("Заполнение завершено.");
+                    setStatusMessage(`Заполнение завершено. Продолжительность: ${hours} ч. ${minutes} м. ${seconds} с.`);
                 }
-
+            } else if (response.data.finished) {
+                const { hours, minutes, seconds } = response.data.duration;
+                clearInterval(intervalCheckFillStatus.current);
+                intervalCheckFillStatus.current = null;
+                setLoadingFill(false);
+                localStorage.removeItem("isFilling");
+                fetchDates();
+                setStatusMessage(`Данные заполнены. Продолжительность: ${hours} ч. ${minutes} м. ${seconds} с.`);
             } else {
                 console.log("Процесс ещё не начался или не активен.");
             }
 
         } catch (error) {
+            const response = await axios.get(`${apiEndpoint}/check-progress-status`);
             if (error.code === 'ECONNABORTED') {
                 failedAttempts.current += 1;
                 setStatusMessage(`Сервер не отвечает. Повторная попытка... (${failedAttempts.current}/5)`);
@@ -175,9 +181,9 @@ const Procuracy = ({ apiEndpoint }) => {
                     localStorage.removeItem("isFilling");
                     setStatusMessage("Ошибка: сервер не отвечает. Проверка остановлена.");
                 }
-
             } else {
                 console.error("Ошибка при получении статуса:", error);
+                console.log("Статус прогресса при ошибке:", response.data);
                 setStatusMessage("Ошибка при проверке статуса заполнения.");
 
                 // ⛔ Останавливаем цикл опроса

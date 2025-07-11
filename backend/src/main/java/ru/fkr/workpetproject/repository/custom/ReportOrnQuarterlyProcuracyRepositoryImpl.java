@@ -12,6 +12,8 @@ public class ReportOrnQuarterlyProcuracyRepositoryImpl implements ReportOrnQuart
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private Object lastDuration = null;
+
     @Override
     public Map<String, Object> checkProgressStatusReportOrnQuarterlyProcuracy() {
         String sql = """
@@ -26,13 +28,15 @@ public class ReportOrnQuarterlyProcuracyRepositoryImpl implements ReportOrnQuart
         Map<String, Object> response = new HashMap<>();
 
         if (!result.isEmpty()) {
+            Object duration = result.get(0).get("duration");
+            lastDuration = duration;
             response.put("processed", true);
             response.put("finished", false);
-            response.put("duration", result.get(0).get("duration"));
+            response.put("duration", duration);
         } else {
             response.put("processed", true);
             response.put("finished", true);
-            response.put("duration", null);
+            response.put("duration", lastDuration);
         }
 
         return response;
