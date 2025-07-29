@@ -24,6 +24,8 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+jwt:
+  secret: mySuperSecretKey987
 
 ---
 spring:
@@ -41,3 +43,5 @@ spring:
       hibernate.id.new_generator_mappings: false
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+jwt:
+  secret: mySuperSecretKey987

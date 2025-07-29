@@ -7,6 +7,7 @@ import {
     ListItemText,
     Collapse,
     Divider,
+    Box,
 } from '@mui/material';
 import {
     Home as HomeIcon,
@@ -15,12 +16,21 @@ import {
     Report as ReportIcon,
     UploadFile
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate для навигации
+import { useNavigate, useLocation } from 'react-router-dom';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const SideMenu = () => {
-    const navigate = useNavigate(); // Хук для навигации
+    const navigate = useNavigate();
+    const role = localStorage.getItem('role');
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        navigate('/');
+    };
+
     const [open, setOpen] = React.useState({
-        reports: false, // Состояние для подпунктов
+        reports: false,
     });
 
     const handleToggle = (menu) => {
@@ -41,57 +51,61 @@ const SideMenu = () => {
                 '& .MuiDrawer-paper': {
                     width: 240,
                     boxSizing: 'border-box',
-                    backgroundColor: '#f5f5f5', // Светло-серый фон
+                    backgroundColor: '#f5f5f5',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between', // Чтобы нижний блок оказался внизу
                 },
             }}
         >
-            <List>
-                <ListItem button onClick={() => handleMenuClick('/')}>
-                    <ListItemIcon>
-                        <HomeIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Главная" />
-                </ListItem>
-                <Divider />
-                <ListItem button onClick={() => handleToggle('reports')}>
-                    <ListItemIcon>
-                        <ReportIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Отчёты" />
-                    {open.reports ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-                    <Collapse in={open.reports} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            <ListItem
-                                button
-                                sx={{ pl: 4 }} // Отступ для подпунктов
-                                onClick={() => handleMenuClick('/ent_pretense_bill_stat')}
-                            >
+            {/* Верхнее меню */}
+            <Box>
+                <List>
+                    
+                    <ListItem button onClick={() => handleMenuClick('/')}>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Главная" />
+                    </ListItem>
+                    <Divider />
+                    {role === 'ADMIN' && (
+                        <>
+                            <ListItem button onClick={() => handleToggle('reports')}>
                                 <ListItemIcon>
                                     <ReportIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="Долговые" />
+                                <ListItemText primary="Отчёты" />
+                                {open.reports ? <ExpandLess /> : <ExpandMore />}
                             </ListItem>
+
                             <Collapse in={open.reports} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    <ListItem 
-                                        button 
+                                    {/* <ListItem 
+                                        button
                                         sx={{ pl: 4 }}
-                                        onClick={() => handleMenuClick('/report_quarterly_procuracy')} 
+                                        onClick={() => handleMenuClick('/ent_pretense_bill_stat')}
+                                    >
+                                        <ListItemIcon>
+                                            <ReportIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Долговые" />
+                                    </ListItem>
+                                    */}
+                                    <ListItem
+                                        button
+                                        sx={{ pl: 4 }}
+                                        onClick={() => handleMenuClick('/report_quarterly_procuracy')}
                                     >
                                         <ListItemIcon>
                                             <ReportIcon />
                                         </ListItemIcon>
                                         <ListItemText primary="Квартал" />
                                     </ListItem>
-                                </List>
-                            </Collapse>
-                            <Collapse in={open.reports} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    <ListItem 
-                                        button 
+                                    <ListItem
+                                        button
                                         sx={{ pl: 4 }}
-                                        onClick={() => handleMenuClick('/report_weekly_rep')} 
+                                        onClick={() => handleMenuClick('/report_weekly_rep')}
                                     >
                                         <ListItemIcon>
                                             <ReportIcon />
@@ -100,15 +114,23 @@ const SideMenu = () => {
                                     </ListItem>
                                 </List>
                             </Collapse>
-                        </List>
-                    </Collapse>
-                {/*<ListItem button onClick={() => handleMenuClick('/xml_parser')}>
-                    <ListItemIcon>
-                        <UploadFile />
-                    </ListItemIcon>
-                    <ListItemText primary="XML Parser" />
-                </ListItem>*/}
-            </List>
+                        </>
+                    )}
+                </List>
+            </Box>
+
+            {/* Нижняя кнопка выхода */}
+            <Box>
+                <Divider />
+                <List>
+                    <ListItem button onClick={handleLogout}>
+                        <ListItemIcon>
+                            <ExitToAppIcon color="error" />
+                        </ListItemIcon>
+                        <ListItemText primary="Выйти" />
+                    </ListItem>
+                </List>
+            </Box>
         </Drawer>
     );
 };

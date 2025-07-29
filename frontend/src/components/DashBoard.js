@@ -36,9 +36,8 @@ const commonInputStyle = {
   fontSize: "1rem",
   lineHeight: "1.2",
   height: "30px",
-  width: "120px",     
+  width: "140px",     
   boxSizing: "border-box",
-  appearance: "none"
 };
 
 const CustomTooltip = ({ active, payload }) => {
@@ -198,6 +197,11 @@ export default function Dashboard() {
   const debt_diff = debt_start_year
   ? ((current_debt - debt_start_year) / debt_start_year) * 100
   : 0;
+
+  const debt_diff_sum = debt_start_year
+  ? (current_debt - debt_start_year)
+  : 0;
+
   const isPositiveDebt = debt_diff > 0;
   const isNegativeDebt = debt_diff < 0;
 
@@ -264,7 +268,6 @@ return (
               <option value={3}>Итого</option>
             </select>
           </div>
-
         </div>
         
         <div style={{ display: "flex", gap: 10, flex: 1}}>
@@ -326,13 +329,21 @@ return (
               <span>
                 Задолженность в сравнении с началом года:
               </span>
-              {isPositiveDebt && (
-                <span style={{ color: "red", fontWeight: "bold" }}> ▲</span>
-              )}
-              {isNegativeDebt && (
-                <span style={{ color: "green", fontWeight: "bold" }}> ▼</span>
-              )}
-              <b> { debt_diff.toFixed(2) }</b>%       
+              <div style={{ marginTop: "4px" }}>
+                {isPositiveDebt && (
+                  <span style={{ color: "red", fontWeight: "bold" }}>▲ </span>
+                )}
+                {isNegativeDebt && (
+                  <span style={{ color: "green", fontWeight: "bold" }}>▼ </span>
+                )}
+                <b>{debt_diff.toFixed(2)}</b>%&nbsp;
+                {isPositiveDebt && (
+                  <b>(+{Number(debt_diff_sum).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽)</b>
+                )}
+                {isNegativeDebt && (
+                  <b>(+{Number(debt_diff_sum).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽)</b>
+                )}
+              </div>     
             </div>
           </div>
 
