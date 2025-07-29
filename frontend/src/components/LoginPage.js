@@ -16,7 +16,7 @@ const LoginPage = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/login', { username, password });
+      const res = await axios.post(`${backendUrl}/api/login`, { username, password });
       console.log('Ответ от сервера:', res.data);
 
       const { token, role } = res.data;
