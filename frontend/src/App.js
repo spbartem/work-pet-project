@@ -105,7 +105,7 @@ function App() {
                     <Route
                         path="/report_weekly_rep"
                         element={
-                            <ProtectedRoute allowedRoles={['ADMIN']}>
+                            <ProtectedRoute allowedRoles={['ADMIN', 'PAYMENT_CENTER']}>
                                 <RepDownload />
                             </ProtectedRoute>
                         }
