@@ -21,7 +21,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const SideMenu = () => {
     const navigate = useNavigate();
-    const role = localStorage.getItem('role');
+    const userRole = localStorage.getItem('role');
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -69,8 +69,8 @@ const SideMenu = () => {
                         <ListItemText primary="Главная" />
                     </ListItem>
                     <Divider />
-                    {role === 'ADMIN' && (
-                        <>
+                    <>
+                        {['ADMIN', 'PAYMENT_CENTER'].includes(userRole) && (
                             <ListItem button onClick={() => handleToggle('reports')}>
                                 <ListItemIcon>
                                     <ReportIcon />
@@ -78,20 +78,22 @@ const SideMenu = () => {
                                 <ListItemText primary="Отчёты" />
                                 {open.reports ? <ExpandLess /> : <ExpandMore />}
                             </ListItem>
+                        )}
 
-                            <Collapse in={open.reports} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {/* <ListItem 
-                                        button
-                                        sx={{ pl: 4 }}
-                                        onClick={() => handleMenuClick('/ent_pretense_bill_stat')}
-                                    >
-                                        <ListItemIcon>
-                                            <ReportIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Долговые" />
-                                    </ListItem>
-                                    */}
+                        <Collapse in={open.reports} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                {/* <ListItem 
+                                    button
+                                    sx={{ pl: 4 }}
+                                    onClick={() => handleMenuClick('/ent_pretense_bill_stat')}
+                                >
+                                    <ListItemIcon>
+                                        <ReportIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Долговые" />
+                                </ListItem>
+                                */}
+                                {['ADMIN'].includes(userRole) && (
                                     <ListItem
                                         button
                                         sx={{ pl: 4 }}
@@ -102,6 +104,8 @@ const SideMenu = () => {
                                         </ListItemIcon>
                                         <ListItemText primary="Квартал" />
                                     </ListItem>
+                                )}
+                                {['ADMIN', 'PAYMENT_CENTER'].includes(userRole) && (
                                     <ListItem
                                         button
                                         sx={{ pl: 4 }}
@@ -112,10 +116,10 @@ const SideMenu = () => {
                                         </ListItemIcon>
                                         <ListItemText primary="Неделя" />
                                     </ListItem>
-                                </List>
-                            </Collapse>
-                        </>
-                    )}
+                                )}
+                            </List>
+                        </Collapse>
+                    </>
                 </List>
             </Box>
 

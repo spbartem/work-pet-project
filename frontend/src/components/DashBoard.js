@@ -36,7 +36,7 @@ const commonInputStyle = {
   fontSize: "1rem",
   lineHeight: "1.2",
   height: "30px",
-  width: "140px",     
+  width: "120px",     
   boxSizing: "border-box",
 };
 
@@ -259,7 +259,7 @@ return (
           <div style={containerStyle} ref={containerRefVr}>
             <label className="my-label">СФФКР:</label>
             <select 
-              value={selectedDecision} 
+              value={ selectedDecision } 
               onChange={(e) => setSelectedDecision(Number(e.target.value))}
               style={ commonInputStyle }
             >
