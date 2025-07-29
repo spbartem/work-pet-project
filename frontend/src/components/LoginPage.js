@@ -9,6 +9,8 @@ import {
   Box,
 } from '@mui/material';
 
+const backendUrl = process.env.REACT_APP_API_URL;
+
 const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
