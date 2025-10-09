@@ -213,8 +213,8 @@ return (
       <div className="border-main-div" style={{ flexDirection: "column",  minWidth: 0, borderRadius: "8px" }}>
         {/* Фильтры */}
         <div style={{ marginBottom: 0, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
-          <h3 style={{ fontSize: 17, textAlign: "center", margin: "0 0 0 0" }}>
-            <b>Задолженность по Минстрою</b>
+          <h3 className="text-base text-center m-0 font-bold">
+            Задолженность по Минстрою
           </h3>
           <div style={containerStyle} ref={containerRefVr}>
             <label className="my-label">Отчётная дата:</label>

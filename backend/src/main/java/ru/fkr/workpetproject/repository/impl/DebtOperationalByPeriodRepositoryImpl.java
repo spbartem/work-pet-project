@@ -2,7 +2,6 @@ package ru.fkr.workpetproject.repository.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 import ru.fkr.workpetproject.dao.dto.DebtOperationalByPeriodDto;
 import ru.fkr.workpetproject.repository.custom.DebtOperationalByPeriodRepositoryCustom;
@@ -53,11 +52,11 @@ public class DebtOperationalByPeriodRepositoryImpl implements DebtOperationalByP
     }
 
     public List<LocalDate> getAvailableReportDates() {
-        List<java.sql.Date> availableReportDates = entityManager.createNativeQuery(
+        List<?> resultList = entityManager.createNativeQuery(
                 "SELECT calculate_date FROM v_dolgReport_by_vr2981_byFeeLink").getResultList();
 
-        return availableReportDates.stream()
-                .map(java.sql.Date::toLocalDate)
+        return resultList.stream()
+                .map(obj -> ((java.sql.Date) obj).toLocalDate())
                 .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,12 @@
 server:
   port: 8080
+  tomcat:
+    max-swallow-size: 2GB
+    max-http-form-post-size: 2GB
+  max-http-request-header-size: 16KB
+
+moneta:
+  upload-dir: ./uploads
 
 spring:
   profiles:
@@ -22,10 +29,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
+      enabled: false
 jwt:
-  secret: mySuperSecretKey987
+  secret: ThisIsASecretKeyThatIsLongEnoughToBeSecureAndProperForHS512ThisIsASecretKeyThatIsLongEnoughToBeSecureAndProperForHS512
 
 ---
 spring:
@@ -44,4 +50,4 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 jwt:
-  secret: mySuperSecretKey987
+  secret: ThisIsASecretKeyThatIsLongEnoughToBeSecureAndProperForHS512ThisIsASecretKeyThatIsLongEnoughToBeSecureAndProperForHS512

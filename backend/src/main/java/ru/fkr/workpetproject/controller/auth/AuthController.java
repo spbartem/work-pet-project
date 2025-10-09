@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.fkr.workpetproject.dao.dto.auth.AuthResponse;
-import ru.fkr.workpetproject.dao.dto.auth.LoginRequest;
+import ru.fkr.workpetproject.dao.dto.auth.AuthResponseDto;
+import ru.fkr.workpetproject.dao.dto.auth.LoginRequestDto;
 import ru.fkr.workpetproject.dao.entity.User;
 import ru.fkr.workpetproject.repository.UserRepository;
 import ru.fkr.workpetproject.service.auth.JwtService;
@@ -29,7 +29,7 @@ public class AuthController {
     private JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
 
         User user = userRepository.findByLogin(request.getUsername());
 
@@ -48,6 +48,6 @@ public class AuthController {
 
         String token = jwtService.generateToken(user);
 
-        return ResponseEntity.ok(new AuthResponse(token, user.getLogin(), user.getRole().getRoleName()));
+        return ResponseEntity.ok(new AuthResponseDto(token, user.getLogin(), user.getRole().getRoleName()));
     }
 }

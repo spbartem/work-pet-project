@@ -2,14 +2,7 @@ package ru.fkr.workpetproject.utils;
 
 import org.apache.poi.ss.usermodel.*;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-
 public class ExcelUtils {
-
-    private static final Map<CellStyle, CellStyle> styleCache = new HashMap<>();
-
     /**
      * Скопировать стиль ячейки.
      */
