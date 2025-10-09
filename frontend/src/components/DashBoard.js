@@ -245,10 +245,10 @@ return (
                     setCalendarViewDate(activeStartDate)
                     }
                     minDate={
-                      new Date(Math.min(...Array.from(allowedTimeStampsOp)))
+                      new Date(Math.min(...Array.from(allowedTimeStampsVr)))
                     }
                     maxDate={
-                      new Date(Math.max(...Array.from(allowedTimeStampsOp)))
+                      new Date(Math.max(...Array.from(allowedTimeStampsVr)))
                     }
                   />
                 </div>
@@ -467,10 +467,10 @@ return (
                     setCalendarViewDate(activeStartDate)
                     }
                     minDate={
-                      new Date(Math.min(...Array.from(allowedTimeStampsVr)))
+                      new Date(Math.min(...Array.from(allowedTimeStampsOp)))
                     }
                     maxDate={
-                      new Date(Math.max(...Array.from(allowedTimeStampsVr)))
+                      new Date(Math.max(...Array.from(allowedTimeStampsOp)))
                     }                    
                   />
                 </div>
