@@ -1,6 +1,5 @@
 package ru.fkr.workpetproject.repository.debt;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.fkr.workpetproject.dao.dto.DebtVrByPeriodDto;

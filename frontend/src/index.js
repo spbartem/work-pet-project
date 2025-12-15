@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'; // <-- добавляем
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './index.css';
 
 const theme = createTheme({
     palette: {

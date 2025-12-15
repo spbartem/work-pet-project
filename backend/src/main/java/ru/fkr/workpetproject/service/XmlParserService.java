@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +16,7 @@ import ru.fkr.workpetproject.dao.entity.RosreestrFullInfoSession;
 import ru.fkr.workpetproject.repository.RosreestrFullInfoRepository;
 import ru.fkr.workpetproject.repository.RosreestrFullInfoSessionRepository;
 
+import javax.xml.parsers.DocumentBuilder;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;

@@ -1,0 +1,31 @@
+alter table vckp_moneta_session_status alter column vckp_moneta_session_status_id type bigint;
+alter table vckp_moneta_session add column progress double precision default 0;
+alter table vckp_moneta_session add column period date default null;
+
+grant all on vckp_moneta to report_user;
+grant select, insert on vckp_moneta_session to report_user;
+grant select on mst_flat to report_user;
+grant all on sequence vckp_moneta_session_vckp_moneta_session_id_seq to report_user;
+grant select, insert on vckp_moneta to report_user;
+grant all on vckp_moneta_session to report_user;
+grant all on vckp_moneta_id_seq to report_user;
+
+добавить secutity definer в vckp_moneta_parse_address
+
+create table vckp_moneta_progress (
+  session_id bigint primary key,
+  processed integer,
+  total integer,
+  updated_at timestamp default now()
+);
+
+
+alter table vckp_moneta add column processed boolean default false;
+create index vckp_moneta_session_id_processed_idx on vckp_moneta(vckp_moneta_session_id, processed);
+
+создать 
+vckp_moneta_parse_address_limit
+vckp_moneta_parse_address_start
+vckp_moneta_parse_address_final
+
+добавить security definer для vckp_moneta_calc

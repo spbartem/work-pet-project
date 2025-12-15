@@ -13,10 +13,13 @@ import {
     Home as HomeIcon,
     ExpandLess,
     ExpandMore,
-    Report as ReportIcon,
-    UploadFile
+    AssessmentOutlined as ReportIcon,
+    DateRangeOutlined as WeeklyReportIcon,
+    QueryStatsOutlined as QuarterlyReportIcon,
+    ElderlyWomanOutlined as MonetaIcon,
+    ImportExportOutlined as InfExchangeIcon
 } from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const SideMenu = () => {
@@ -100,7 +103,7 @@ const SideMenu = () => {
                                         onClick={() => handleMenuClick('/report_quarterly_procuracy')}
                                     >
                                         <ListItemIcon>
-                                            <ReportIcon />
+                                            <QuarterlyReportIcon />
                                         </ListItemIcon>
                                         <ListItemText primary="Квартал" />
                                     </ListItem>
@@ -112,13 +115,40 @@ const SideMenu = () => {
                                         onClick={() => handleMenuClick('/report_weekly_rep')}
                                     >
                                         <ListItemIcon>
-                                            <ReportIcon />
+                                            <WeeklyReportIcon />
                                         </ListItemIcon>
                                         <ListItemText primary="Неделя" />
                                     </ListItem>
                                 )}
                             </List>
                         </Collapse>
+                    </>
+                    <Divider />
+                    <>
+                         {['ADMIN'].includes(userRole) && (
+                            <ListItem button onClick={() => handleToggle('exchange')}>
+                                <ListItemIcon>
+                                    <InfExchangeIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Инф. обмен" />
+                                {open.exchange ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem>
+                        )}
+
+                        <Collapse in={open.exchange} timeout="auto" unmountOnExit>
+                            {['ADMIN'].includes(userRole) && (
+                                <ListItem
+                                    button
+                                    sx={{ pl: 4}}
+                                    onClick={() => handleMenuClick('/vckp_moneta')}
+                                >
+                                    <ListItemIcon>
+                                        <MonetaIcon sx={{ color: 'purple' }}/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Монета" />
+                                </ListItem>
+                            )}
+                        </Collapse>                               
                     </>
                 </List>
             </Box>

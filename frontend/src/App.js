@@ -7,10 +7,12 @@ import LoginPage from './components/LoginPage';
 import EntPretenseBillStat from './components/EntPretenseBillStat';
 import XmlParser from './components/XmlParser';
 import Dashboard from './components/DashBoard';
+import VckpMoneta from './components/Moneta';
 import ReportsPageQuarterly from './components/reports/quarterly/ReportsPage';
 import RepDownload from './components/reports/weekly/Rep';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ProtectedRoute from './components/ProtectedRoute';
+import { Add } from '@mui/icons-material';
 
 const theme = createTheme({
     components: {
@@ -108,6 +110,16 @@ function App() {
                             <ProtectedRoute allowedRoles={['ADMIN', 'PAYMENT_CENTER']}>
                                 <RepDownload />
                             </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/vckp_moneta"
+                        element={
+                        isAuthenticated
+                            ?   <ProtectedRoute allowedRoles={['ADMIN']}>
+                                    <VckpMoneta />
+                                </ProtectedRoute>
+                            :   <LoginPage onLogin={handleLogin} />
                         }
                     />
                     <Route

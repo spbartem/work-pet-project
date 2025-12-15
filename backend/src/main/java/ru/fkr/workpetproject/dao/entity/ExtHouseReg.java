@@ -6,7 +6,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "\"ext_house-reg\"")
 public class ExtHouseReg extends BaseHouse {

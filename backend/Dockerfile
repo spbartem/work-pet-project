@@ -11,7 +11,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Используем официальный образ OpenJDK
-FROM openjdk:17-jdk-alpine
+FROM amazoncorretto:17
 
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /app
