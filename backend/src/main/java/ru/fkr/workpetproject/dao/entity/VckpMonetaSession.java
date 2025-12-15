@@ -49,8 +49,8 @@ public class VckpMonetaSession {
     @Column(name = "file_id")
     private Long fileId;
 
-    @Column(name = "progress")
-    private Double progress;
+    // @Column(name = "progress")
+    // private Double progress;
 
     // @Column(name = "period")
     // private LocalDate period;
