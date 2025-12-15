@@ -52,6 +52,6 @@ public class VckpMonetaSession {
     @Column(name = "progress")
     private Double progress;
 
-    @Column(name = "period")
-    private LocalDate period;
+    // @Column(name = "period")
+    // private LocalDate period;
 }
